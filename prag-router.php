@@ -105,9 +105,13 @@ if ( ! class_exists( 'PragRouter' ) ) {
 // Create object if needed
 if ( ! @$PragRouter && function_exists( 'add_action' )) { $PragRouter = new PragRouter(); }
 
-$args = array(
-    'url' => 'prag_testing',
-    'title' => 'hihi',
-    'content' => 'howdy what is up'
-);
-$PragRouter->addRoute($args);
+/**
+ * Example usage
+ *
+ * $args = array(
+ *     'url' => 'prag_testing',
+ *     'title' => 'hihi',
+ *     'content' => 'howdy what is up'
+ * );
+ * $PragRouter->addRoute($args);
+ */
