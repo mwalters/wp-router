@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Virtual Page
+Plugin Name: WordPress Router
 Plugin URI: https://www.pragmatticode.com/
 Description: Helper plugin for creating virtual pages
 Version: 1.0.0
