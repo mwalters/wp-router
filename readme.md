@@ -22,8 +22,8 @@ In terms of what you return, the router accommodates several cases:
 
 ```
 Array (
-    [title] => mytitle
-    [content] => mycontent
+    [title] => 'mytitle'
+    [content] => 'mycontent'
 )
 ```
 
