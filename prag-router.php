@@ -3,7 +3,7 @@
 Plugin Name: Virtual Page
 Plugin URI: https://www.pragmatticode.com/
 Description: Helper plugin for creating virtual pages
-Version: 1.0
+Version: 1.0.0
 Author: Pragmattic
 Author URI: https://www.pragmatticode.com/
 License: GPLv2

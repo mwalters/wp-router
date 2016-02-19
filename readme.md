@@ -1,6 +1,6 @@
 # WordPress Router
 
-This plugin will really only be helpful to developers. It abstracts much of the WordPress Rewrite API away from you to allow you to more easily declare routes and have them execute callbacks that you defined in your own theme/plugin code.
+This plugin will really only be helpful to developers. It abstracts much of the WordPress Rewrite API away from you to allow you to more easily declare routes and have them execute callbacks that you define in your own theme/plugin code.
 
 ## What the developer needs to know
 
@@ -29,4 +29,4 @@ Array (
 
 It is worth noting that your callback can do whatever it wishes, and then simply exit if for instance you wanted to render JSON and then prevent the WordPress page template being rendered.
 
-See `plugin-example.php` for 2 simple code examples of how the router can be called.
+See `plugin-example.php` for two simple code examples of how the router can be called.
