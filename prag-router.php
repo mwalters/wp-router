@@ -22,6 +22,104 @@ if ( ! class_exists( 'PragRouter' ) ) {
         private $url;
         private $title;
         private $content;
+        private $routes;
+
+        public function __construct() {
+            add_filter('init', array(&$this, 'processUrl'));
+        }
+
+        /**
+         * Check the requested URL to see if the requested URL is one we should route
+         */
+        public function processUrl() {
+            $url = $this->normalizeRoute($_SERVER['REQUEST_URI']);
+
+            if (isset($this->routes[md5($url)])) {
+                if (strtoupper($_SERVER['REQUEST_METHOD']) == strtoupper($this->routes[md5($url)]['method'])) {
+                    $this->executeRoute($url);
+                }
+            }
+        }
+
+        /**
+         * Execute the requested route
+         */
+        private function executeRoute($route = '') {
+            if ($route === '') {
+                return false;
+            }
+
+            $pageContent = call_user_func_array($this->routes[md5($route)]['callback'], array('route' => $route));
+
+            if ( ! empty($pageContent)) {
+                if (is_bool($pageContent) && $pageContent === false) {
+                    return;
+                } else {
+                    $this->setTitle('');
+                    $this->setContent('');
+                }
+
+                if (is_array($pageContent)) {
+                    if (isset($pageContent['title'])) {
+                        $this->setTitle($pageContent['title']);
+                    } else {
+                        $this->setTitle('');
+                    }
+                    if (isset($pageContent['content'])) {
+                        $this->setContent($pageContent['content']);
+                    } else {
+                        $this->setContent('');
+                    }
+                }
+
+                if (is_string($pageContent)) {
+                    $this->setTitle('');
+                    $this->setContent($pageContent);
+                }
+
+                $this->setUrl($route);
+
+                add_filter('the_posts', array(&$this, 'makePage'));
+            }
+        }
+
+        /**
+         * Add a route to process if requested
+         */
+        public function addRoute( $route = '', $callback = null, $method = 'GET' ) {
+            if ($route === '' || $callback === null) {
+                return false;
+            }
+
+            $route = $this->normalizeRoute($route);
+
+            if (isset($this->routes[md5($route)])) {
+                return false;
+            }
+
+            $this->routes[md5($route)] = array(
+                'callback' => $callback,
+                'method' => $method,
+                'route' => $route
+            );
+        }
+
+        /**
+         * Normalize a given route so it is compared apples to apples
+         */
+        private function normalizeRoute($route = '') {
+            if ($route === '') {
+                return $route;
+            }
+
+            if (substr($route, 0, 1) == '/') {
+                $route = substr($route, 1, strlen($route));
+            }
+
+            $route = untrailingslashit(trim($route));
+
+            return $route;
+        }
 
         public function setUrl($url = '') {
             $this->url = $url;
@@ -44,6 +142,9 @@ if ( ! class_exists( 'PragRouter' ) ) {
             return $this->content;
         }
 
+        /**
+         * Add a faux page to WordPress to display our content
+         */
         public function makePage($posts) {
             global $wp, $wp_query;
 
@@ -89,29 +190,8 @@ if ( ! class_exists( 'PragRouter' ) ) {
 
             return ($posts);
         }
-
-        public function addRoute($args) {
-            $url = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
-            if ($url == $args['url']) {
-                $this->setUrl($args['url']);
-                $this->setTitle($args['title']);
-                $this->setContent($args['content']);
-                add_filter('the_posts', array(&$this, 'makePage'));
-            }
-        }
     }
 }
 
 // Create object if needed
 if ( ! @$PragRouter && function_exists('add_action')) { $PragRouter = new PragRouter(); }
-
-/**
- * Example usage
- *
- * $args = array(
- *     'url' => 'prag_testing',
- *     'title' => 'hihi',
- *     'content' => 'howdy what is up'
- * );
- * $PragRouter->addRoute($args);
- */
