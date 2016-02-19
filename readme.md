@@ -25,6 +25,7 @@ Array (
     [title] => mytitle
     [content] => mycontent
 )
+```
 
 It is worth noting that your callback can do whatever it wishes, and then simply exit if for instance you wanted to render JSON and then prevent the WordPress page template being rendered.
 
