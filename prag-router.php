@@ -107,6 +107,8 @@ if ( ! class_exists('PragRouter')) {
                 'method' => $method,
                 'route' => $route
             );
+
+            return true;
         }
 
         /**
