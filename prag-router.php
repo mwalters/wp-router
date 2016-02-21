@@ -25,6 +25,8 @@ if ( ! class_exists('PragRouter')) {
         private $routes;
 
         public function __construct() {
+            $this->setTitle('');
+            $this->setContent('');
             add_filter('init', array(&$this, 'processUrl'));
         }
 
@@ -59,26 +61,18 @@ if ( ! class_exists('PragRouter')) {
             if ( ! empty($pageContent)) {
                 if (is_bool($pageContent) && $pageContent === false) {
                     return;
-                } else {
-                    $this->setTitle('');
-                    $this->setContent('');
                 }
 
                 if (is_array($pageContent)) {
                     if (isset($pageContent['title'])) {
                         $this->setTitle($pageContent['title']);
-                    } else {
-                        $this->setTitle('');
                     }
                     if (isset($pageContent['content'])) {
                         $this->setContent($pageContent['content']);
-                    } else {
-                        $this->setContent('');
                     }
                 }
 
                 if (is_string($pageContent)) {
-                    $this->setTitle('');
                     $this->setContent($pageContent);
                 }
 
