@@ -16,7 +16,7 @@ Text Domain: prag-router
  * Make this more like a routing mechanism.  Below gets the needed job done for now though.
  */
 
-if ( ! class_exists( 'PragRouter' ) ) {
+if ( ! class_exists('PragRouter')) {
     class PragRouter {
 
         private $url;
@@ -34,8 +34,10 @@ if ( ! class_exists( 'PragRouter' ) ) {
         public function processUrl() {
             $url = $this->normalizeRoute($_SERVER['REQUEST_URI']);
 
-            if (isset($this->routes[md5($url)])) {
-                if (strtoupper($_SERVER['REQUEST_METHOD']) == strtoupper($this->routes[md5($url)]['method'])) {
+            $urlHash = md5($url);
+
+            if (isset($this->routes[$urlHash])) {
+                if (strtoupper($_SERVER['REQUEST_METHOD']) == strtoupper($this->routes[$urlHash]['method'])) {
                     $this->executeRoute($url);
                 }
             }
@@ -44,12 +46,15 @@ if ( ! class_exists( 'PragRouter' ) ) {
         /**
          * Execute the requested route
          */
-        private function executeRoute($route = '') {
+        private function executeRoute($route = '', $urlHash = '') {
             if ($route === '') {
                 return false;
             }
+            if ($urlHash === '') {
+                $urlHash = md5($route);
+            }
 
-            $pageContent = call_user_func_array($this->routes[md5($route)]['callback'], array('route' => $route));
+            $pageContent = call_user_func_array($this->routes[$urlHash]['callback'], array('route' => $route));
 
             if ( ! empty($pageContent)) {
                 if (is_bool($pageContent) && $pageContent === false) {
