@@ -40,7 +40,7 @@ if ( ! class_exists('PragRouter')) {
 
             if (isset($this->routes[$urlHash])) {
                 if (strtoupper($_SERVER['REQUEST_METHOD']) == strtoupper($this->routes[$urlHash]['method'])) {
-                    $this->executeRoute($url);
+                    $this->executeRoute($url, $urlHash);
                 }
             }
         }
@@ -48,15 +48,15 @@ if ( ! class_exists('PragRouter')) {
         /**
          * Execute the requested route
          */
-        private function executeRoute($route = '', $urlHash = '') {
+        private function executeRoute($route = '', $routeHash = '') {
             if ($route === '') {
                 return false;
             }
-            if ($urlHash === '') {
-                $urlHash = md5($route);
+            if ($routeHash === '') {
+                $routeHash = md5($route);
             }
 
-            $pageContent = call_user_func_array($this->routes[$urlHash]['callback'], array('route' => $route));
+            $pageContent = call_user_func_array($this->routes[$routeHash]['callback'], array('route' => $route));
 
             if ( ! empty($pageContent)) {
                 if (is_bool($pageContent) && $pageContent === false) {
@@ -85,18 +85,20 @@ if ( ! class_exists('PragRouter')) {
         /**
          * Add a route to process if requested
          */
-        public function addRoute( $route = '', $callback = null, $method = 'GET' ) {
+        public function addRoute($route = '', $callback = null, $method = 'GET') {
             if ($route === '' || $callback === null) {
                 return false;
             }
 
             $route = $this->normalizeRoute($route);
 
-            if (isset($this->routes[md5($route)])) {
+            $routeHash = md5($route);
+
+            if (isset($this->routes[$routeHash])) {
                 return false;
             }
 
-            $this->routes[md5($route)] = array(
+            $this->routes[$routeHash] = array(
                 'callback' => $callback,
                 'method' => $method,
                 'route' => $route
@@ -113,7 +115,7 @@ if ( ! class_exists('PragRouter')) {
                 return $route;
             }
 
-            if (substr($route, 0, 1) == '/') {
+            if (substr($route, 0, 1) === '/') {
                 $route = substr($route, 1, strlen($route));
             }
 
@@ -155,7 +157,7 @@ if ( ! class_exists('PragRouter')) {
                 $post->post_author           = 0;
                 $post->post_date             = current_time('mysql');
                 $post->post_date_gmt         = current_time('mysql', 1);
-                $post->post_content          = $this->content;
+                $post->post_content          = $this->getContent();
                 $post->post_title            = $this->getTitle();
                 $post->post_excerpt          = '';
                 $post->post_status           = 'publish';
