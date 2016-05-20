@@ -3,11 +3,12 @@
 Plugin Name: WordPress Router
 Plugin URI: http://www.mattwalters.net/projects/wordpress/wp-router/
 Description: Helper plugin for creating virtual pages
-Version: 2.0.0
+Version: 2.0.1
 Author: Matt Walters
 Author URI: http://www.mattwalters.net/
 License: GPLv2
 Text Domain: msw-wp-router
+GitHub Plugin URI https://github.com/mwalters/wp-router
 */
 
 /*
