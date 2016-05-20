@@ -7,14 +7,15 @@ function mytest() {
     return $returnVal;
 }
 
-$PragRouter->addRoute('test', 'mytest');
+add_action('mswwprouter_add_route', function() {
+    MswWpRouter::addRoute('test', 'mytest');
+}, 999);
 
 
-if ( ! class_exists( 'PragRouterTester' ) ) {
-    class PragRouterTester {
+if ( ! class_exists( 'MswWpRouterTester' ) ) {
+    class MswWpRouterTester {
         function __construct() {
-            global $PragRouter;
-            $PragRouter->addRoute('testing', array(&$this, 'testing'));
+            MswWpRouter::addRoute('testing', array(&$this, 'testing'));
         }
 
         public function testing() {
@@ -26,4 +27,8 @@ if ( ! class_exists( 'PragRouterTester' ) ) {
         }
     }
 }
-if ( ! @$PragRouterTester && function_exists('add_action')) { $PragRouterTester = new PragRouterTester(); }
+if ( ! @$MswWpRouterTester && function_exists('add_action')) {
+    add_action('mswwprouter_add_route', function() {
+        $MswWpRouterTester = new MswWpRouterTester();
+    }, 999);
+}

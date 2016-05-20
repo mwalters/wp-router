@@ -9,8 +9,10 @@ You can define routes in terms of the URL you want your code to be called for. Y
 If you would like a `GET` request to `/test/` to execute the function `mytest()` then you would use this
 
 ```
-// Note, the 3rd parameter is optional. If it is not passed, then `GET` is assumed.
-$PragRouter->addRoute('test', 'mytest', 'GET');
+add_action('mswwprouter_add_route', function() {
+    // Note, the 3rd parameter is optional. If it is not passed, then `GET` is assumed.
+    MswWpRouter::addRoute('test', 'mytest', 'GET');
+}, 999);
 ```
 
 You can pass it any [PHP Callable](http://php.net/manual/en/language.types.callable.php). This means that methods on your objects are fair game as a callback.
