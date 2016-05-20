@@ -3,7 +3,7 @@
 Plugin Name: WordPress Router
 Plugin URI: http://www.mattwalters.net/projects/wordpress/wp-router/
 Description: Helper plugin for creating virtual pages
-Version: 1.0.2
+Version: 2.0.0
 Author: Matt Walters
 Author URI: http://www.mattwalters.net/
 License: GPLv2
@@ -29,8 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 
-if ( ! class_exists('MswWpRouter')) {
-    class MswWpRouter {
+if ( ! class_exists('MRouter')) {
+    class MRouter {
 
         private static $url;            // URL for faux page
         private static $title   = '';   // Title for faux page
@@ -39,12 +39,12 @@ if ( ! class_exists('MswWpRouter')) {
 
         public static function addWpHooks() {
             // Hook into WordPress
-            add_filter('init', array('MswWpRouter', 'processUrl'));
-            add_action('plugins_loaded', array('MswWpRouter', 'addRoutes'));
+            add_filter('init', array('MRouter', 'processUrl'));
+            add_action('plugins_loaded', array('MRouter', 'registerRoutes'));
         }
 
-        public static function addRoutes() {
-            do_action('mswwprouter_add_route');
+        public static function registerRoutes() {
+            do_action('mr_register_route');
         }
 
         /**
@@ -70,7 +70,7 @@ if ( ! class_exists('MswWpRouter')) {
          * @param string $route The route being executed
          * @param string $routeHash Hash of the route being executed; optional
          */
-        private static function executeRoute($route = '', $routeHash = '') {
+        protected static function executeRoute($route = '', $routeHash = '') {
             if ($route === '') {
                 // Return `false` if no route was provided
                 return false;
@@ -115,7 +115,7 @@ if ( ! class_exists('MswWpRouter')) {
                 self::setUrl($route);
 
                 // Hook into WordPress so we can display a faux page
-                add_filter('the_posts', array('MswWpRouter', 'makePage'));
+                add_filter('the_posts', array('MRouter', 'makePage'));
             }
         }
 
@@ -159,7 +159,7 @@ if ( ! class_exists('MswWpRouter')) {
          * @param string $route Route to be normalized
          * @return string Normalized route
          */
-        private static function normalizeRoute($route = '') {
+        protected static function normalizeRoute($route = '') {
             if ($route === '') {
                 return $route;
             }
@@ -176,25 +176,25 @@ if ( ! class_exists('MswWpRouter')) {
         }
 
         // Start getters and setters
-        public static function setUrl($url = '') {
-            self::$url = $url;
-        }
-        public static function getUrl() {
+        protected static function url() {
             return self::$url;
         }
-
-        public static function setTitle($title = '') {
-            self::$title = $title;
+        protected static function setUrl($url = '') {
+            self::$url = $url;
         }
-        public static function getTitle() {
+
+        protected static function title() {
             return self::$title;
         }
-
-        public static function setContent($content = '') {
-            self::$content = $content;
+        protected static function setTitle($title = '') {
+            self::$title = $title;
         }
-        public static function getContent() {
+
+        protected static function content() {
             return self::$content;
+        }
+        protected static function setContent($content = '') {
+            self::$content = $content;
         }
         // End getters and setters
 
@@ -205,27 +205,27 @@ if ( ! class_exists('MswWpRouter')) {
         public static function makePage($posts) {
             global $wp, $wp_query;
 
-            if (count($posts) == 0 && (strcasecmp($wp->request, self::getUrl()) == 0 || $wp->query_vars['page_id'] == self::getUrl())) {
+            if (count($posts) == 0 && (strcasecmp($wp->request, self::url()) == 0 || $wp->query_vars['page_id'] == self::url())) {
                 $post = new stdClass;
-                $post->ID                    = 0;
+                $post->ID                    = -1;
                 $post->post_author           = 0;
                 $post->post_date             = current_time('mysql');
                 $post->post_date_gmt         = current_time('mysql', 1);
-                $post->post_content          = self::getContent();
-                $post->post_title            = self::getTitle();
+                $post->post_content          = self::content();
+                $post->post_title            = self::title();
                 $post->post_excerpt          = '';
                 $post->post_status           = 'publish';
                 $post->comment_status        = 'closed';
                 $post->ping_status           = 'closed';
                 $post->post_password         = '';
-                $post->post_name             = self::getUrl();
+                $post->post_name             = self::url();
                 $post->to_ping               = '';
                 $post->pinged                = '';
                 $post->modified              = $post->post_date;
                 $post->modified_gmt          = $post->post_date_gmt;
                 $post->post_content_filtered = '';
                 $post->post_parent           = 0;
-                $post->guid                  = get_home_url('/' . self::getUrl());
+                $post->guid                  = get_home_url('/' . self::url());
                 $post->menu_order            = 0;
                 $post->post_type             = 'page';
                 $post->post_mime_type        = '';
@@ -250,7 +250,4 @@ if ( ! class_exists('MswWpRouter')) {
     }
 }
 
-MswWpRouter::addWpHooks();
-
-// Create object if needed
-// if ( ! @$MswWpRouter && function_exists('add_action')) { $MswWpRouter = new MswWpRouter(); }
+MRouter::addWpHooks();

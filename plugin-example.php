@@ -7,15 +7,15 @@ function mytest() {
     return $returnVal;
 }
 
-add_action('mswwprouter_add_route', function() {
-    MswWpRouter::addRoute('test', 'mytest');
-}, 999);
+add_action('mr_register_route', function() {
+    MRouter::addRoute('test', 'mytest');
+});
 
 
 if ( ! class_exists( 'MswWpRouterTester' ) ) {
     class MswWpRouterTester {
         function __construct() {
-            MswWpRouter::addRoute('testing', array(&$this, 'testing'));
+            MRouter::addRoute('testing', array(&$this, 'testing'));
         }
 
         public function testing() {
@@ -28,7 +28,7 @@ if ( ! class_exists( 'MswWpRouterTester' ) ) {
     }
 }
 if ( ! @$MswWpRouterTester && function_exists('add_action')) {
-    add_action('mswwprouter_add_route', function() {
+    add_action('mr_register_route', function() {
         $MswWpRouterTester = new MswWpRouterTester();
-    }, 999);
+    });
 }
