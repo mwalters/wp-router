@@ -9,7 +9,7 @@ You can define routes in terms of the URL you want your code to be called for. Y
 If you would like a `GET` request to `/test/` to execute the function `mytest()` then you would use this
 
 ```
-add_action('mswwprouter_add_route', function() {
+add_action('mr_register_route', function() {
     // Note, the 3rd parameter is optional. If it is not passed, then `GET` is assumed.
     MswWpRouter::addRoute('test', 'mytest', 'GET');
 });
